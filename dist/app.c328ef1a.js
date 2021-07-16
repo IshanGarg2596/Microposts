@@ -1059,6 +1059,90 @@ var EasyHTTP = /*#__PURE__*/function () {
 
 var http = new EasyHTTP();
 exports.http = http;
+},{}],"ui.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ui = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var UI = /*#__PURE__*/function () {
+  function UI() {
+    _classCallCheck(this, UI);
+
+    this.post = document.querySelector("#posts");
+    this.titleInput = document.querySelector("#title");
+    this.bodyInput = document.querySelector("#body");
+    this.idInput = document.querySelector("#id");
+    this.postsSubmit = document.querySelector(".post-submit");
+    this.forState = "add";
+  } //Show posts
+
+
+  _createClass(UI, [{
+    key: "showPosts",
+    value: function showPosts(posts) {
+      var output = "";
+      posts.forEach(function (post) {
+        output += "<div class=\"card mb-3\">\n          <div class=\"card-body\">\n            <h4 class=\"card-title\">".concat(post.title, "</h4>\n            <p class=\"card-text\">").concat(post.body, "</p>\n            <a href=\"#\" class=\"edit card-link\" data-id=\"").concat(post.id, "\">\n              <i class=\"fa fa-pencil\"></i>\n            </a>\n\n            <a href=\"#\" class=\"delete card-link\" data-id=\"").concat(post.id, "\">\n            <i class=\"fa fa-remove\"></i>\n          </a>\n          </div>\n        </div>");
+      });
+      this.post.innerHTML = output;
+    } // Show alert message
+
+  }, {
+    key: "showAlert",
+    value: function showAlert(message, className) {
+      var _this = this;
+
+      this.clearAlert(); // Create div
+
+      var div = document.createElement("div"); // Add classes
+
+      div.className = className; // Add text
+
+      div.appendChild(document.createTextNode(message)); // Get parent
+
+      var container = document.querySelector(".postsContainer"); // Get posts
+
+      var posts = document.querySelector("#posts"); // Insert alert div
+
+      container.insertBefore(div, posts); // Timeout
+
+      setTimeout(function () {
+        _this.clearAlert();
+      }, 3000);
+    } // Clear alert message
+
+  }, {
+    key: "clearAlert",
+    value: function clearAlert() {
+      var currentAlert = document.querySelector(".alert");
+
+      if (currentAlert) {
+        currentAlert.remove();
+      }
+    } // Clear all fields
+
+  }, {
+    key: "clearFields",
+    value: function clearFields() {
+      this.titleInput.value = "";
+      this.bodyInput.value = "";
+    }
+  }]);
+
+  return UI;
+}();
+
+var ui = new UI();
+exports.ui = ui;
 },{}],"app.js":[function(require,module,exports) {
 "use strict";
 
@@ -1066,17 +1150,60 @@ require("regenerator-runtime/runtime");
 
 var _http = require("./http");
 
-//Get Posts on Dom load
-document.addEventListener("DOMContentLoaded", getposts);
+var _ui = require("./ui.js");
 
-function getposts() {
+//Get Posts on Dom load
+document.addEventListener("DOMContentLoaded", getPosts); //Listen for add post
+
+document.querySelector(".post-submit").addEventListener("click", submitPost); //Listen for delete
+
+document.querySelector("#posts").addEventListener("click", deletePost); //Get Posts
+
+function getPosts() {
   _http.http.get("http://localhost:3000/posts").then(function (data) {
-    return console.log(data);
+    return _ui.ui.showPosts(data);
   }).catch(function (err) {
     return console.log(err);
   });
+} // Submit Post
+
+
+function submitPost() {
+  var title = document.querySelector("#title").value;
+  var body = document.querySelector("#body").value;
+  var data = {
+    title: title,
+    body: body
+  }; // Create Post
+
+  _http.http.post("http://localhost:3000/posts", data).then(function (data) {
+    _ui.ui.showAlert("Post added", "alert alert-success");
+
+    _ui.ui.clearFields();
+
+    getPosts();
+  }).catch(function (err) {
+    return console.log(err);
+  });
+} //Delete Post
+
+
+function deletePost(e) {
+  e.preventDefault();
+
+  if (e.target.parentElement.classList.contains("delete")) {
+    var id = e.target.parentElement.dataset.id;
+
+    if (confirm("Are you sure?")) {
+      _http.http.delete("http://localhost:3000/posts/".concat(id)).then(function (data) {
+        _ui.ui.showAlert("Post Removed", "alert alert-success");
+
+        getPosts();
+      });
+    }
+  }
 }
-},{"regenerator-runtime/runtime":"node_modules/regenerator-runtime/runtime.js","./http":"http.js"}],"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"regenerator-runtime/runtime":"node_modules/regenerator-runtime/runtime.js","./http":"http.js","./ui.js":"ui.js"}],"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
