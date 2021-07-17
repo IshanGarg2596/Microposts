@@ -1,11 +1,6 @@
 {
   "posts": [
     {
-      "title": "post 3 ",
-      "body": "this is post 3",
-      "id": 1
-    },
-    {
       "title": "post 2 ",
       "body": "delete post 2\n",
       "id": 3

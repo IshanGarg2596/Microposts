@@ -1091,7 +1091,7 @@ var UI = /*#__PURE__*/function () {
     value: function showPosts(posts) {
       var output = "";
       posts.forEach(function (post) {
-        output += "<div class=\"card mb-3\">\n          <div class=\"card-body\">\n            <h4 class=\"card-title\">".concat(post.title, "</h4>\n            <p class=\"card-text\">").concat(post.body, "</p>\n            <a href=\"#\" class=\"edit card-link\" data-id=\"").concat(post.id, "\">\n              <i class=\"fa fa-pencil\"></i>\n            </a>\n\n            <a href=\"#\" class=\"delete card-link\" data-id=\"").concat(post.id, "\">\n            <i class=\"fa fa-remove\"></i>\n          </a>\n          </div>\n        </div>");
+        output += "<div class=\"card mb-3\">\n          <div class=\"card-body\">\n            <h4 class=\"card-title\">".concat(post.title, "</h4>\n            <p class=\"card-text\">").concat(post.body, "</p>\n            <a href=\"#\" class=\"edit card-link\" data-id=\"").concat(post.id, "\">\n              <i class=\"fa fa-pencil\"></i>\n            </a>\n\n            <a href=\"#\" class=\"delete card-link text-danger\" data-id=\"").concat(post.id, "\">\n            <i class=\"fa fa-remove\"></i>\n          </a>\n          </div>\n        </div>");
       });
       this.post.innerHTML = output;
     } // Show alert message
@@ -1328,7 +1328,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60052" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52204" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

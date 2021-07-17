@@ -21,7 +21,7 @@ class UI {
               <i class="fa fa-pencil"></i>
             </a>
 
-            <a href="#" class="delete card-link" data-id="${post.id}">
+            <a href="#" class="delete card-link text-danger" data-id="${post.id}">
             <i class="fa fa-remove"></i>
           </a>
           </div>
