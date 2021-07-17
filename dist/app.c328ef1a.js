@@ -1135,6 +1135,52 @@ var UI = /*#__PURE__*/function () {
     value: function clearFields() {
       this.titleInput.value = "";
       this.bodyInput.value = "";
+    } // Fill form to edit
+
+  }, {
+    key: "fillForm",
+    value: function fillForm(data) {
+      this.titleInput.value = data.title;
+      this.bodyInput.value = data.body;
+      this.idInput.value = data.id;
+      this.changeFormState("edit");
+    } // Clear Id hidden value
+
+  }, {
+    key: "clearIdInput",
+    value: function clearIdInput() {
+      this.idInput.vale = "";
+    } // Change the form state
+
+  }, {
+    key: "changeFormState",
+    value: function changeFormState(type) {
+      if (type === "edit") {
+        this.postsSubmit.textContent = "Update Post";
+        this.postsSubmit.className = "post-submit btn btn-warning"; //Create a Cancel button
+
+        var button = document.createElement("button");
+        button.className = "post-cancel btn btn-light";
+        button.appendChild(document.createTextNode("Cancel Edit")); //Get Parent
+
+        var div = document.querySelector("#btn-container"); // get element to insert before
+
+        var formEnd = document.querySelector(".form-end"); //Insert Cancel Button
+
+        div.insertBefore(button, formEnd);
+      } else {
+        this.postsSubmit.textContent = "Post It";
+        this.postsSubmit.className = "post-submit btn btn-primary"; // Remove cancel button if it is there
+
+        if (document.querySelector(".post-cancel")) {
+          document.querySelector(".post-cancel").remove();
+        } // Clear id from hidden field
+
+
+        this.clearIdInput(); // Clear text
+
+        this.clearFields();
+      }
     }
   }]);
 
@@ -1157,7 +1203,11 @@ document.addEventListener("DOMContentLoaded", getPosts); //Listen for add post
 
 document.querySelector(".post-submit").addEventListener("click", submitPost); //Listen for delete
 
-document.querySelector("#posts").addEventListener("click", deletePost); //Get Posts
+document.querySelector("#posts").addEventListener("click", deletePost); //Listen for edit state
+
+document.querySelector("#posts").addEventListener("click", enableEdit); // Listen for cancel
+
+document.querySelector("#btn-container").addEventListener("click", cancelEdit); //Get Posts
 
 function getPosts() {
   _http.http.get("http://localhost:3000/posts").then(function (data) {
@@ -1171,20 +1221,40 @@ function getPosts() {
 function submitPost() {
   var title = document.querySelector("#title").value;
   var body = document.querySelector("#body").value;
-  var data = {
-    title: title,
-    body: body
-  }; // Create Post
+  var id = document.querySelector("#id").value;
 
-  _http.http.post("http://localhost:3000/posts", data).then(function (data) {
-    _ui.ui.showAlert("Post added", "alert alert-success");
+  if (title === "" || body === "") {
+    _ui.ui.showAlert("Please enter all the fields", "alert alert-danger");
+  } else {
+    var data = {
+      title: title,
+      body: body
+    }; // Check for ID
 
-    _ui.ui.clearFields();
+    if (id === "") {
+      // Create Post
+      _http.http.post("http://localhost:3000/posts", data).then(function (data) {
+        _ui.ui.showAlert("Post added", "alert alert-success");
 
-    getPosts();
-  }).catch(function (err) {
-    return console.log(err);
-  });
+        _ui.ui.clearFields();
+
+        getPosts();
+      }).catch(function (err) {
+        return console.log(err);
+      });
+    } else {
+      // Update Post
+      _http.http.put("http://localhost:3000/posts/".concat(id), data).then(function (data) {
+        _ui.ui.showAlert("Post updated", "alert alert-success");
+
+        _ui.ui.changeFormState("add");
+
+        getPosts();
+      }).catch(function (err) {
+        return console.log(err);
+      });
+    }
+  }
 } //Delete Post
 
 
@@ -1202,6 +1272,33 @@ function deletePost(e) {
       });
     }
   }
+} //Enable edit state
+
+
+function enableEdit(e) {
+  if (e.target.parentElement.classList.contains("edit")) {
+    var id = e.target.parentElement.dataset.id;
+    var body = e.target.parentElement.previousElementSibling.textContent;
+    var title = e.target.parentElement.previousElementSibling.previousElementSibling.textContent;
+    var data = {
+      id: id,
+      title: title,
+      body: body
+    }; //Fill form with current post
+
+    _ui.ui.fillForm(data);
+  }
+
+  e.preventDefault();
+} // Cancel Edit State
+
+
+function cancelEdit(e) {
+  if (e.target.classList.contains("post-cancel")) {
+    _ui.ui.changeFormState("add");
+  }
+
+  e.preventDefault();
 }
 },{"regenerator-runtime/runtime":"node_modules/regenerator-runtime/runtime.js","./http":"http.js","./ui.js":"ui.js"}],"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
